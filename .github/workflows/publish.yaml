@@ -196,3 +196,4 @@ jobs:
         env:
           VERSION: ${{ env.VERSION }}
           GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REGISTRY: ghcr.io/${{ github.repository }}
