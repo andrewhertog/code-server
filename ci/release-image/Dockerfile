@@ -51,6 +51,12 @@ RUN --mount=from=packages,src=/tmp,dst=/tmp/packages dpkg -i /tmp/packages/code-
 # https://github.com/coder/code-server/issues/5177
 ENV ENTRYPOINTD=${HOME}/entrypoint.d
 
+# Install extensions on container startup
+RUN mkdir -p /home/coder/entrypoint.d
+COPY ci/release-image/install-extensions.sh /home/coder/entrypoint.d/
+RUN chmod +x /home/coder/entrypoint.d/install-extensions.sh && \
+    chown -R coder:coder /home/coder/entrypoint.d
+
 EXPOSE 8080
 # This way, if someone sets $DOCKER_USER, docker-exec will still work as
 # the uid will remain the same. note: only relevant if -u isn't passed to
