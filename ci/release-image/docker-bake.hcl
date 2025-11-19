@@ -6,9 +6,9 @@ variable "VERSION" {
     default = "latest"
 }
 
-variable "DOCKER_REGISTRY" {
-    default = "docker.io/codercom/code-server"
-}
+// variable "DOCKER_REGISTRY" {
+//     default = "docker.io/codercom/code-server"
+// }
 
 variable "GITHUB_REGISTRY" {
     default = "ghcr.io/coder/code-server"
@@ -43,7 +43,7 @@ function "gen_tags" {
 function "gen_tags_for_docker_and_ghcr" {
     params = [tag]
     result = concat(
-        gen_tags("${DOCKER_REGISTRY}", "${tag}"),
+        // gen_tags("${DOCKER_REGISTRY}", "${tag}"),
         gen_tags("${GITHUB_REGISTRY}", "${tag}"),
     )
 }
