@@ -1,0 +1,55 @@
+Hide activity bar icons and chat button
+
+This patch hides specific UI elements:
+
+Activity Bar Icons:
+- Explorer icon (workbench.view.explorer)
+- Search icon (workbench.view.search)
+- SCM (Source Control) icon (workbench.view.scm)
+- Debug icon (workbench.view.debug)
+
+Title Bar:
+- Chat/AI assistant button
+
+Implementation:
+1. Adds a data-composite-id attribute to activity bar items (compositeBarActions.ts)
+2. Uses CSS to hide specific UI elements (activityaction.css)
+
+This approach keeps all view containers and services registered, avoiding
+JavaScript errors while cleanly hiding unwanted UI elements through CSS.
+Index: code-server/lib/vscode/src/vs/workbench/browser/parts/activitybar/media/activityaction.css
+===================================================================
+--- code-server.orig/lib/vscode/src/vs/workbench/browser/parts/activitybar/media/activityaction.css
++++ code-server/lib/vscode/src/vs/workbench/browser/parts/activitybar/media/activityaction.css
+@@ -208,3 +208,17 @@
+ 	left: auto;
+ 	right: 0;
+ }
++
++/* Hide entire activity bar icons for specific view containers */
++.monaco-workbench .activitybar .composite-bar .action-item[data-composite-id="workbench.view.explorer"],
++.monaco-workbench .activitybar .composite-bar .action-item[data-composite-id="workbench.view.scm"],
++.monaco-workbench .activitybar .composite-bar .action-item[data-composite-id="workbench.view.debug"],
++.monaco-workbench .activitybar .composite-bar .action-item[data-composite-id="workbench.view.search"] {
++	display: none !important;
++}
++
++/* Hide chat icon from title bar */
++.monaco-workbench .titlebar .codicon-chat-sparkle,
++.monaco-workbench .titlebar .action-item:has(.codicon-chat-sparkle) {
++	display: none !important;
++}
+Index: code-server/lib/vscode/src/vs/workbench/browser/parts/compositeBarActions.ts
+===================================================================
+--- code-server.orig/lib/vscode/src/vs/workbench/browser/parts/compositeBarActions.ts
++++ code-server/lib/vscode/src/vs/workbench/browser/parts/compositeBarActions.ts
+@@ -236,6 +236,9 @@ export class CompositeBarActionViewItem
+ 			this.container.classList.add('icon');
+ 		}
+ 
++		// Add data attribute with composite ID for CSS targeting
++		this.container.setAttribute('data-composite-id', this.compositeBarActionItem.id);
++
+ 		if (this.options.hasPopup) {
+ 			this.container.setAttribute('role', 'button');
+ 			this.container.setAttribute('aria-haspopup', 'true');
