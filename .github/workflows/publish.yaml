@@ -178,7 +178,7 @@ jobs:
       - name: Download deb artifacts
         uses: robinraju/release-downloader@v1.12
         with:
-          repository: "coder/code-server"
+          repository: ${{ github.repository}}
           tag: v${{ env.VERSION }}
           fileName: "*.deb"
           out-file-path: "release-packages"
@@ -186,7 +186,7 @@ jobs:
       - name: Download rpm artifacts
         uses: robinraju/release-downloader@v1.12
         with:
-          repository: "coder/code-server"
+          repository: ${{ github.repository}}
           tag: v${{ env.VERSION }}
           fileName: "*.rpm"
           out-file-path: "release-packages"
