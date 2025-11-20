@@ -1,0 +1,74 @@
+Hide chat sidebar by default
+
+This patch disables the chat sidebar view container registration to prevent
+the chat panel from showing in the auxiliary bar by default.
+
+The chat view container and view descriptor registration are commented out,
+which removes the chat UI from the sidebar while keeping all other chat
+services intact to prevent dependency errors.
+
+Index: code-server/lib/vscode/src/vs/workbench/contrib/chat/browser/chatParticipant.contribution.ts
+===================================================================
+--- code-server.orig/lib/vscode/src/vs/workbench/contrib/chat/browser/chatParticipant.contribution.ts
++++ code-server/lib/vscode/src/vs/workbench/contrib/chat/browser/chatParticipant.contribution.ts
+@@ -4,22 +4,31 @@
+  *--------------------------------------------------------------------------------------------*/
+ 
+ import { coalesce, isNonEmptyArray } from '../../../../base/common/arrays.js';
+-import { Codicon } from '../../../../base/common/codicons.js';
++// DISABLED: Codicon only used in commented chat view registration
++// import { Codicon } from '../../../../base/common/codicons.js';
+ import { toErrorMessage } from '../../../../base/common/errorMessage.js';
+ import { Event } from '../../../../base/common/event.js';
+ import { createCommandUri, MarkdownString } from '../../../../base/common/htmlContent.js';
+-import { KeyCode, KeyMod } from '../../../../base/common/keyCodes.js';
++// DISABLED: KeyCode/KeyMod only used in commented chat view registration
++// import { KeyCode, KeyMod } from '../../../../base/common/keyCodes.js';
+ import { Disposable, DisposableMap, DisposableStore } from '../../../../base/common/lifecycle.js';
+ import * as strings from '../../../../base/common/strings.js';
+-import { localize, localize2 } from '../../../../nls.js';
+-import { ContextKeyExpr, IContextKeyService } from '../../../../platform/contextkey/common/contextkey.js';
++import { localize } from '../../../../nls.js';
++// DISABLED: localize2 only used in commented chat view registration
++// import { localize, localize2 } from '../../../../nls.js';
++// DISABLED: ContextKeyExpr only used in commented chat view registration
++// import { ContextKeyExpr, IContextKeyService } from '../../../../platform/contextkey/common/contextkey.js';
++import { IContextKeyService } from '../../../../platform/contextkey/common/contextkey.js';
+ import { ExtensionIdentifier, IExtensionManifest } from '../../../../platform/extensions/common/extensions.js';
+ import { SyncDescriptor } from '../../../../platform/instantiation/common/descriptors.js';
+ import { IProductService } from '../../../../platform/product/common/productService.js';
+ import { Registry } from '../../../../platform/registry/common/platform.js';
+-import { ViewPaneContainer } from '../../../browser/parts/views/viewPaneContainer.js';
++// DISABLED: ViewPaneContainer only used in commented chat view registration
++// import { ViewPaneContainer } from '../../../browser/parts/views/viewPaneContainer.js';
+ import { IWorkbenchContribution } from '../../../common/contributions.js';
+-import { IViewContainersRegistry, IViewDescriptor, IViewsRegistry, ViewContainer, ViewContainerLocation, Extensions as ViewExtensions } from '../../../common/views.js';
++// DISABLED: View-related types only used in commented chat view registration
++// import { IViewContainersRegistry, IViewDescriptor, IViewsRegistry, ViewContainer, ViewContainerLocation, Extensions as ViewExtensions } from '../../../common/views.js';
++import { IViewsRegistry, Extensions as ViewExtensions } from '../../../common/views.js';
+ import { Extensions, IExtensionFeaturesRegistry, IExtensionFeatureTableRenderer, IRenderedData, IRowData, ITableData } from '../../../services/extensionManagement/common/extensionFeatures.js';
+ import { isProposedApiEnabled } from '../../../services/extensions/common/extensions.js';
+ import * as extensionsRegistry from '../../../services/extensions/common/extensionsRegistry.js';
+@@ -30,10 +39,12 @@ import { ChatContextKeys } from '../comm
+ import { IRawChatParticipantContribution } from '../common/chatParticipantContribTypes.js';
+ import { ChatAgentLocation, ChatModeKind } from '../common/constants.js';
+ import { ChatViewId } from './chat.js';
+-import { CHAT_SIDEBAR_PANEL_ID, ChatViewPane } from './chatViewPane.js';
++// DISABLED: CHAT_SIDEBAR_PANEL_ID and ChatViewPane only used in commented chat view registration
++// import { CHAT_SIDEBAR_PANEL_ID, ChatViewPane } from './chatViewPane.js';
+ 
+ // --- Chat Container &  View Registration
+-
++// DISABLED: Hide chat sidebar by default in code-server
++/*
+ const chatViewContainer: ViewContainer = Registry.as<IViewContainersRegistry>(ViewExtensions.ViewContainersRegistry).registerViewContainer({
+ 	id: CHAT_SIDEBAR_PANEL_ID,
+ 	title: localize2('chat.viewContainer.label', "Chat"),
+@@ -75,6 +86,7 @@ const chatViewDescriptor: IViewDescripto
+ 	)
+ }];
+ Registry.as<IViewsRegistry>(ViewExtensions.ViewsRegistry).registerViews(chatViewDescriptor, chatViewContainer);
++*/
+ 
+ const chatParticipantExtensionPoint = extensionsRegistry.ExtensionsRegistry.registerExtensionPoint<IRawChatParticipantContribution[]>({
+ 	extensionPoint: 'chatParticipants',
