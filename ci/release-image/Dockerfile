@@ -49,7 +49,7 @@ RUN --mount=from=packages,src=/tmp,dst=/tmp/packages dpkg -i /tmp/packages/code-
 
 # Allow users to have scripts run on container startup to prepare workspace.
 # https://github.com/coder/code-server/issues/5177
-ENV ENTRYPOINTD=${HOME}/entrypoint.d
+ENV ENTRYPOINTD=/home/coder/entrypoint.d
 
 # Install extensions on container startup
 RUN mkdir -p /home/coder/entrypoint.d
