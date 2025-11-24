@@ -55,7 +55,9 @@ ENV ENTRYPOINTD=/home/coder/entrypoint.d
 RUN mkdir -p /home/coder/entrypoint.d
 COPY ci/release-image/install-extensions.sh /home/coder/entrypoint.d/
 RUN chmod +x /home/coder/entrypoint.d/install-extensions.sh && \
-    chown -R coder:coder /home/coder/entrypoint.d
+    chown -R coder:coder /home/coder/entrypoint.d && \
+    mkdir -p /home/coder/.config && \
+    chown -R coder:coder /home/coder/.config
 
 EXPOSE 8080
 # This way, if someone sets $DOCKER_USER, docker-exec will still work as
