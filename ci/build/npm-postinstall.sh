@@ -77,7 +77,7 @@ main() {
   fi
 
   if [ "$major_node_version" -ne "${FORCE_NODE_VERSION:-22}" ]; then
-    echo "ERROR: code-server currently requires node v22."
+    echo "ERROR: codex currently requires node v22."
     if [ -n "$FORCE_NODE_VERSION" ]; then
       echo "However, you have overrided the version check to use v$FORCE_NODE_VERSION."
     fi
@@ -92,7 +92,7 @@ main() {
   if is_root; then
     case "${npm_config_user_agent-}" in npm*)
       if [ "${npm_config_unsafe_perm-}" != "true" ]; then
-        echo "Please pass --unsafe-perm to npm to install code-server"
+        echo "Please pass --unsafe-perm to npm to install codex"
         echo "Otherwise post-install scripts will not have permissions to run"
         echo "See https://docs.npmjs.com/misc/config#unsafe-perm"
         echo "See https://stackoverflow.com/questions/49084929/npm-sudo-global-installation-unsafe-perm"
@@ -131,7 +131,7 @@ install_with_yarn_or_npm() {
       fi
       ;;
     *)
-      echo "Could not determine which package manager is being used to install code-server"
+      echo "Could not determine which package manager is being used to install codex"
       exit 1
       ;;
   esac
@@ -146,7 +146,7 @@ vscode_install() {
   fi
 
   symlink_asar
-  symlink_bin_script remote-cli code code-server
+  symlink_bin_script remote-cli code codex
   symlink_bin_script helpers browser browser .sh
 
   cd extensions
