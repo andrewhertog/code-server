@@ -27,9 +27,9 @@ describe("getEnvPaths", () => {
       const getEnvPaths = require("../../../src/node/util").getEnvPaths
       const envPaths = getEnvPaths("darwin")
 
-      expect(envPaths.data).toEqual("/home/usr/.local/share/code-server")
-      expect(envPaths.config).toEqual("/home/usr/.config/code-server")
-      expect(envPaths.runtime).toEqual("/tmp/runtime/code-server")
+      expect(envPaths.data).toEqual("/home/usr/.local/share/codex")
+      expect(envPaths.config).toEqual("/home/usr/.config/codex")
+      expect(envPaths.runtime).toEqual("/tmp/runtime/codex")
     })
 
     it("should return the env paths using envPaths when xdgBasedir is undefined", () => {
@@ -84,7 +84,7 @@ describe("getEnvPaths", () => {
 
       expect(envPaths.data).toEqual("/linux/envPath/.local/share")
       expect(envPaths.config).toEqual("/linux/envPath/.config")
-      expect(envPaths.runtime).toEqual("/tmp/runtime/code-server")
+      expect(envPaths.runtime).toEqual("/tmp/runtime/codex")
     })
 
     it("should return the env paths using envPaths when xdgBasedir is undefined", () => {
