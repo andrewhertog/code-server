@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Overview
 
 codex runs VS Code on a remote server and makes it accessible through a browser. It works by:
+
 1. Embedding VS Code as a git submodule (`lib/vscode`)
 2. Applying patches using Quilt to modify VS Code's behavior
 3. Providing an HTTP/WebSocket server that serves VS Code in the browser
@@ -13,6 +14,7 @@ codex runs VS Code on a remote server and makes it accessible through a browser.
 ## Build & Development Commands
 
 ### Initial Setup
+
 ```bash
 git submodule update --init
 quilt push -a
@@ -23,6 +25,7 @@ npm run release
 ```
 
 ### Development Mode
+
 ```bash
 npm run watch
 # Launches codex at localhost:8080 with live reload
@@ -30,22 +33,26 @@ npm run watch
 ```
 
 ### Build Commands
+
 - `npm run build` - Build codex into `./out` and bundle frontend into `./dist`
 - `npm run build:vscode` - Build VS Code into `./lib/vscode/out-vscode`
 - `npm run release` - Bundle everything into `./release` directory
 - `npm run clean` - Remove all build artifacts
 
 ### Testing
+
 - `npm run test:unit` - Run Jest unit tests (in `test/unit/`)
 - `npm run test:e2e` - Run Playwright end-to-end tests (in `test/e2e/`)
 - `npm run test:integration` - Run integration tests (tests built packages)
 - `npm run test:scripts` - Run bats script tests (in `test/scripts/`)
 
 ### Code Quality
+
 - `npm run fmt` - Run prettier and doctoc formatters
 - `npm run lint:ts` - Run eslint on TypeScript/JavaScript (excludes `lib/vscode`)
 
 ### Packaging
+
 ```bash
 npm run release:standalone  # Create standalone releases
 npm run package            # Package into .tar.gz, .deb, .rpm
@@ -56,6 +63,7 @@ npm run package            # Package into .tar.gz, .deb, .rpm
 **CRITICAL**: Always use Quilt to manage patches when making changes in `lib/vscode`.
 
 ### Working with Patches
+
 ```bash
 quilt push -a          # Apply all patches
 quilt pop -a           # Remove all patches
@@ -72,12 +80,14 @@ quilt applied          # List applied patches
 ```
 
 ### Patch Guidelines
+
 - Files **must** be added with `quilt add` before making changes
 - Each patch must result in a working codex (no broken intermediate states)
 - Add comments in patches explaining the reason and how to reproduce the behavior
 - Every patch should have an e2e test
 
 ### Updating VS Code Version
+
 1. `quilt pop -a` - Remove all patches
 2. Update `lib/vscode` submodule to desired release branch
 3. `quilt push` each patch one at a time
@@ -87,7 +97,9 @@ quilt applied          # List applied patches
 5. Check Node.js version matches VS Code's Electron version
 
 ### Current Patches (in `patches/series`)
+
 The patches directory contains modifications to VS Code including:
+
 - `integration.diff` - Core integration with codex
 - `branding.diff` - Branding customizations
 - `base-path.diff` - Support for running under a base path
@@ -100,6 +112,7 @@ The patches directory contains modifications to VS Code including:
 ## Architecture
 
 ### Directory Structure
+
 - `src/node/` - Node.js server code (HTTP server, CLI, authentication)
   - `entry.ts` - Main entry point, CLI argument parsing
   - `main.ts` - Server initialization logic
@@ -132,6 +145,7 @@ The patches directory contains modifications to VS Code including:
 - `release/` - Final packaged release
 
 ### Request Flow
+
 1. Client connects to Express server (`src/node/app.ts`, `src/node/routes/index.ts`)
 2. Authentication middleware checks credentials (password/no auth)
 3. Routes registered in `src/node/routes/index.ts`:
@@ -142,6 +156,7 @@ The patches directory contains modifications to VS Code including:
 5. VS Code runs in `lib/vscode` with patches applied
 
 ### Key Components
+
 - **Heart**: Heartbeat mechanism to track if server is in use (`src/node/heart.ts`)
 - **Wrapper**: Process management for spawning/managing child processes (`src/node/wrapper.ts`)
 - **SettingsProvider**: Manages codex settings in `codex.json` (`src/node/settings.ts`)
@@ -151,6 +166,7 @@ The patches directory contains modifications to VS Code including:
 ## Common Development Tasks
 
 ### Running a Single Test
+
 ```bash
 # E2E test
 npx playwright test test/e2e/terminal.test.ts
@@ -160,20 +176,25 @@ npm run test:unit -- test/unit/cli.test.ts
 ```
 
 ### Testing Patches
+
 After modifying a patch with `quilt refresh`:
+
 ```bash
 npm run build:vscode  # Rebuild VS Code with new patches
 npm run watch         # Test in development mode
 ```
 
 ### Debugging "Forbidden access" Error
+
 This means patches didn't apply correctly (auth patch is missing). Run:
+
 ```bash
 quilt pop -a
 quilt push -a
 ```
 
 ## Known Issues
+
 - Creating and debugging custom VS Code extensions doesn't work
 - Extension profiling and tips are disabled
 - Display language support only works in full builds, not development mode
