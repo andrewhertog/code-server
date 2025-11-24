@@ -24,11 +24,11 @@ async function entry(): Promise<void> {
   const args = await setDefaults(cliArgs, configArgs)
 
   if (args.help) {
-    console.log("code-server", getVersionString())
+    console.log("codex", getVersionString())
     console.log("")
-    console.log(`Usage: code-server [options] [path]`)
-    console.log(`    - Opening a directory: code-server ./path/to/your/project`)
-    console.log(`    - Opening a saved workspace: code-server ./path/to/your/project.code-workspace`)
+    console.log(`Usage: codex [options] [path]`)
+    console.log(`    - Opening a directory: codex ./path/to/your/project`)
+    console.log(`    - Opening a saved workspace: codex ./path/to/your/project.code-workspace`)
     console.log("")
     console.log("Options")
     optionDescriptions().forEach((description) => {

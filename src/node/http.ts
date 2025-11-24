@@ -226,7 +226,7 @@ export const getCookieDomain = (host: string, proxyDomains: string[]): string | 
     // set the domain for them. In my testing though localhost is the only
     // problem (the browser just doesn't store the cookie at all). localhost has
     // an additional problem which is that a reverse proxy might give
-    // code-server localhost even though the domain is really domain.tld (by
+    // codex localhost even though the domain is really domain.tld (by
     // default NGINX does this).
     !host.includes(".")
   ) {
@@ -305,9 +305,9 @@ export const getCookieOptions = (req: express.Request): express.CookieOptions =>
   // rewritten it.  That means we need to get the path from the frontend.
 
   // The reason we need to set the path (as opposed to defaulting to /) is to
-  // avoid code-server instances on different sub-paths clobbering each other or
+  // avoid codex instances on different sub-paths clobbering each other or
   // from accessing each other's tokens (and to prevent other services from
-  // accessing code-server's tokens).
+  // accessing codex's tokens).
 
   // When logging in or out the request must include the href (the full current
   // URL of that page) and the relative path to the root as given to it by the

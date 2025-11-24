@@ -1,0 +1,64 @@
+Disable all built-in extensions for minimal build
+
+This patch removes all built-in extensions from VS Code to create a minimal base build.
+This significantly reduces the bundle size and provides a clean slate for adding only
+the extensions you need.
+
+Extensions removed:
+- All 96+ local workspace extensions (language support, themes, etc.)
+- All marketplace extensions (debuggers, etc.)
+
+This creates a truly minimal VS Code instance with:
+- Core editor functionality
+- No language-specific features
+- No built-in themes (will use basic fallback)
+- No Git integration
+- No debugging support
+- No terminal enhancements
+
+Users can install only the extensions they need via the marketplace.
+
+Modified files:
+- build/gulpfile.reh.js - Sets both localWorkspaceExtensions and marketplaceExtensions to empty arrays
+
+Testing:
+1. Build code-server with `npm run build:vscode`
+2. Check that release/lib/vscode/extensions/ is empty or minimal
+3. Verify code-server starts and runs
+4. Confirm no built-in extensions appear in Extensions view
+
+Index: code-server/lib/vscode/build/gulpfile.reh.js
+===================================================================
+--- code-server.orig/lib/vscode/build/gulpfile.reh.js
++++ code-server/lib/vscode/build/gulpfile.reh.js
+@@ -257,7 +257,8 @@ function packageTask(type, platform, arc
+ 
+ 		const src = gulp.src(sourceFolderName + '/**', { base: '.' })
+ 			.pipe(rename(function (path) { path.dirname = path.dirname.replace(new RegExp('^' + sourceFolderName), 'out'); }))
+-			.pipe(util.setExecutableBit(['**/*.sh']));
++			.pipe(util.setExecutableBit(['**/*.sh']))
++			.pipe(filter(['**', '!**/*.{js,css}.map']));
+ 
+ 		const workspaceExtensionPoints = ['debuggers', 'jsonValidation'];
+ 		const isUIExtension = (manifest) => {
+@@ -296,9 +297,9 @@ function packageTask(type, platform, arc
+ 			.map(name => `.build/extensions/${name}/**`);
+ 
+ 		const extensions = gulp.src(extensionPaths, { base: '.build', dot: true });
+-		const extensionsCommonDependencies = gulp.src('.build/extensions/node_modules/**', { base: '.build', dot: true })
++		const extensionsCommonDependencies = gulp.src('.build/extensions/node_modules/**', { base: '.build', dot: true });
++		const sources = es.merge(src, extensions, extensionsCommonDependencies)
+ 			.pipe(filter(['**', '!**/*.{js,css}.map'], { dot: true }));
+-		const sources = es.merge(src, extensions, extensionsCommonDependencies);
+ 
+ 		let version = packageJson.version;
+ 		const quality = product.quality;
+@@ -451,7 +452,7 @@ function tweakProductForServerWeb(produc
+ 	const minifyTask = task.define(`minify-vscode-${type}`, task.series(
+ 		bundleTask,
+ 		util.rimraf(`out-vscode-${type}-min`),
+-		optimize.minifyTask(`out-vscode-${type}`, ``)
++		optimize.minifyTask(`out-vscode-${type}`, `https://main.vscode-cdn.net/sourcemaps/${commit}/core`)
+ 	));
+ 	gulp.task(minifyTask);
+ 

@@ -49,7 +49,7 @@ export interface UpdateSettings {
 }
 
 /**
- * Global code-server settings.
+ * Global codex settings.
  */
 export interface CoderSettings extends UpdateSettings {
   query?: ParsedQs

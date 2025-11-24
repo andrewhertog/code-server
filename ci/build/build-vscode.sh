@@ -98,8 +98,7 @@ main() {
     ],
     "trustedExtensionAuthAccess": [
       "vscode.git", "vscode.github",
-      "github.vscode-pull-request-github",
-      "github.copilot", "github.copilot-chat"
+      "github.vscode-pull-request-github"
     ],
     "aiConfig": {
       "ariaKey": "code-server"
@@ -122,6 +121,10 @@ EOF
   git checkout product.json
 
   popd
+
+  # Ensure the extensions directory exists even if no extensions were built
+  # (required for the release script to copy extension metadata files)
+  mkdir -p lib/vscode-reh-web-linux-x64/extensions
 
   pushd lib/vscode-reh-web-linux-x64
   # Make sure Code took the version we set in the environment variable.  Not

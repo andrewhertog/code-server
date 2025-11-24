@@ -187,7 +187,7 @@ export const options: Options<Required<UserProvidedArgs>> = {
   },
   "disable-getting-started-override": {
     type: "boolean",
-    description: "Disable the coder/coder override in the Help: Getting Started page.",
+    description: "Disable the custom Getting Started page override.",
   },
   "disable-proxy": {
     type: "boolean",

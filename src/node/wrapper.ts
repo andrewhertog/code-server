@@ -248,10 +248,10 @@ export class ParentProcess extends Process {
     const opts = {
       size: "10M",
       maxFiles: 10,
-      path: path.join(paths.data, "coder-logs"),
+      path: path.join(paths.data, "codex-logs"),
     }
-    this.logStdoutStream = rfs.createStream("code-server-stdout.log", opts)
-    this.logStderrStream = rfs.createStream("code-server-stderr.log", opts)
+    this.logStdoutStream = rfs.createStream("codex-stdout.log", opts)
+    this.logStderrStream = rfs.createStream("codex-stderr.log", opts)
 
     this.onDispose(() => this.disposeChild())
 
@@ -382,7 +382,7 @@ export function isChild(proc: ChildProcess | ParentProcess): proc is ChildProces
   return proc instanceof ChildProcess
 }
 
-// It's possible that the pipe has closed (for example if you run code-server
+// It's possible that the pipe has closed (for example if you run codex
 // --version | head -1). Assume that means we're done.
 if (!process.stdout.isTTY) {
   process.stdout.on("error", () => wrapper.exit())

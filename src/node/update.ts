@@ -25,7 +25,7 @@ export class UpdateProvider {
 
   public constructor(
     /**
-     * The URL for getting the latest version of code-server. Should return JSON
+     * The URL for getting the latest version of codex. Should return JSON
      * that fulfills `LatestResponse`.
      */
     private readonly latestUrl: string,
@@ -109,7 +109,7 @@ export class UpdateProvider {
           getProxyForUrl: () => httpProxyUri || "",
         })
         const httpx = isHttps ? https : http
-        const client = httpx.get(uri, { headers: { "User-Agent": "code-server" }, agent }, (response) => {
+        const client = httpx.get(uri, { headers: { "User-Agent": "codex" }, agent }, (response) => {
           if (!response.statusCode || response.statusCode < 200 || response.statusCode >= 400) {
             response.destroy()
             return reject(new Error(`${uri}: ${response.statusCode || "500"}`))

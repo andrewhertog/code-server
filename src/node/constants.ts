@@ -22,7 +22,7 @@ const codePkg = getPackageJson(`${vsRootPath}/${PACKAGE_JSON}`) || { version: "0
 export const version = pkg.version || "development"
 export const commit = pkg.commit || "development"
 export const codeVersion = codePkg.version || "development"
-export const tmpdir = path.join(os.tmpdir(), "code-server")
+export const tmpdir = path.join(os.tmpdir(), "codex")
 export const isDevMode = commit === "development"
 export const httpProxyUri =
   process.env.HTTPS_PROXY || process.env.https_proxy || process.env.HTTP_PROXY || process.env.http_proxy

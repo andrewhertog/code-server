@@ -1,13 +1,13 @@
 {
-  "name": "code-server",
+  "name": "codex",
   "license": "MIT",
   "version": "0.0.0",
   "description": "Run VS Code on a remote server.",
-  "homepage": "https://github.com/coder/code-server",
+  "homepage": "https://github.com/andrewhertog/code-server",
   "bugs": {
-    "url": "https://github.com/coder/code-server/issues"
+    "url": "https://github.com/andrewhertog/code-server/issues"
   },
-  "repository": "https://github.com/coder/code-server",
+  "repository": "https://github.com/andrewhertog/code-server",
   "scripts": {
     "clean": "./ci/build/clean.sh",
     "build": "./ci/build/build-code-server.sh",
@@ -92,13 +92,13 @@
     "@types/node": "22.x"
   },
   "bin": {
-    "code-server": "out/node/entry.js"
+    "codex": "out/node/entry.js"
   },
   "keywords": [
     "vscode",
     "development",
     "ide",
-    "coder",
+    "codex",
     "vscode-remote",
     "browser-ide",
     "remote-development"

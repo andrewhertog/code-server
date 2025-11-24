@@ -1,0 +1,394 @@
+Disable built-in activity bar view containers
+
+This patch removes only the view containers (activity bar icons) while keeping
+the core editor functionality intact.
+
+View containers disabled:
+- Explorer viewlet (activity bar icon only)
+- SCM (Source Control)
+- Debug views
+
+Core functionality kept:
+- File editor factory (files.contribution.js)
+- File actions (fileActions.contribution.js)
+- Bulk edit service (required for editing)
+
+This allows files to be opened and edited while removing the sidebar views.
+Index: code-server/lib/vscode/src/vs/workbench/workbench.common.main.ts
+===================================================================
+--- code-server.orig/lib/vscode/src/vs/workbench/workbench.common.main.ts
++++ code-server/lib/vscode/src/vs/workbench/workbench.common.main.ts
+@@ -224,8 +224,8 @@ import './contrib/logs/common/logs.contr
+ // Quickaccess
+ import './contrib/quickaccess/browser/quickAccess.contribution.js';
+ 
+-// Explorer
+-import './contrib/files/browser/explorerViewlet.js';
++// Explorer - Keep core functionality, disable only the viewlet
++// import './contrib/files/browser/explorerViewlet.js';
+ import './contrib/files/browser/fileActions.contribution.js';
+ import './contrib/files/browser/files.contribution.js';
+ 
+@@ -243,10 +243,10 @@ import './contrib/searchEditor/browser/s
+ // Sash
+ import './contrib/sash/browser/sash.contribution.js';
+ 
+-// SCM
++// SCM - Re-enabled (service only, view container hidden via configuration)
+ import './contrib/scm/browser/scm.contribution.js';
+ 
+-// Debug
++// Debug - Re-enabled (service only, view container hidden via configuration)
+ import './contrib/debug/browser/debug.contribution.js';
+ import './contrib/debug/browser/debugEditorContribution.js';
+ import './contrib/debug/browser/breakpointEditorContribution.js';
+Index: code-server/lib/vscode/src/vs/workbench/contrib/debug/browser/debug.contribution.ts
+===================================================================
+--- code-server.orig/lib/vscode/src/vs/workbench/contrib/debug/browser/debug.contribution.ts
++++ code-server/lib/vscode/src/vs/workbench/contrib/debug/browser/debug.contribution.ts
+@@ -28,7 +28,7 @@ import { IViewContainersRegistry, IViews
+ import { launchSchemaId } from '../../../services/configuration/common/configuration.js';
+ import { LifecyclePhase } from '../../../services/lifecycle/common/lifecycle.js';
+ import { COPY_NOTEBOOK_VARIABLE_VALUE_ID, COPY_NOTEBOOK_VARIABLE_VALUE_LABEL } from '../../notebook/browser/contrib/notebookVariables/notebookVariableCommands.js';
+-import { BREAKPOINTS_VIEW_ID, BREAKPOINT_EDITOR_CONTRIBUTION_ID, CALLSTACK_VIEW_ID, CONTEXT_BREAKPOINTS_EXIST, CONTEXT_BREAK_WHEN_VALUE_CHANGES_SUPPORTED, CONTEXT_BREAK_WHEN_VALUE_IS_ACCESSED_SUPPORTED, CONTEXT_BREAK_WHEN_VALUE_IS_READ_SUPPORTED, CONTEXT_CALLSTACK_ITEM_TYPE, CONTEXT_CAN_VIEW_MEMORY, CONTEXT_DEBUGGERS_AVAILABLE, CONTEXT_DEBUG_STATE, CONTEXT_DEBUG_UX, CONTEXT_EXPRESSION_SELECTED, CONTEXT_FOCUSED_SESSION_IS_ATTACH, CONTEXT_FOCUSED_SESSION_IS_NO_DEBUG, CONTEXT_HAS_DEBUGGED, CONTEXT_IN_DEBUG_MODE, CONTEXT_JUMP_TO_CURSOR_SUPPORTED, CONTEXT_LOADED_SCRIPTS_SUPPORTED, CONTEXT_RESTART_FRAME_SUPPORTED, CONTEXT_SET_EXPRESSION_SUPPORTED, CONTEXT_SET_VARIABLE_SUPPORTED, CONTEXT_STACK_FRAME_SUPPORTS_RESTART, CONTEXT_STEP_INTO_TARGETS_SUPPORTED, CONTEXT_SUSPEND_DEBUGGEE_SUPPORTED, CONTEXT_TERMINATE_DEBUGGEE_SUPPORTED, CONTEXT_TERMINATE_THREADS_SUPPORTED, CONTEXT_VARIABLE_EVALUATE_NAME_PRESENT, CONTEXT_VARIABLE_IS_READONLY, CONTEXT_VARIABLE_VALUE, CONTEXT_WATCH_ITEM_TYPE, DEBUG_PANEL_ID, DISASSEMBLY_VIEW_ID, EDITOR_CONTRIBUTION_ID, IDebugService, INTERNAL_CONSOLE_OPTIONS_SCHEMA, LOADED_SCRIPTS_VIEW_ID, REPL_VIEW_ID, State, VARIABLES_VIEW_ID, VIEWLET_ID, WATCH_VIEW_ID, getStateLabel } from '../common/debug.js';
++import { BREAKPOINT_EDITOR_CONTRIBUTION_ID, CONTEXT_BREAK_WHEN_VALUE_CHANGES_SUPPORTED, CONTEXT_BREAK_WHEN_VALUE_IS_ACCESSED_SUPPORTED, CONTEXT_BREAK_WHEN_VALUE_IS_READ_SUPPORTED, CONTEXT_CALLSTACK_ITEM_TYPE, CONTEXT_CAN_VIEW_MEMORY, CONTEXT_DEBUGGERS_AVAILABLE, CONTEXT_DEBUG_STATE, CONTEXT_EXPRESSION_SELECTED, CONTEXT_FOCUSED_SESSION_IS_ATTACH, CONTEXT_FOCUSED_SESSION_IS_NO_DEBUG, CONTEXT_IN_DEBUG_MODE, CONTEXT_JUMP_TO_CURSOR_SUPPORTED, CONTEXT_LOADED_SCRIPTS_SUPPORTED, CONTEXT_RESTART_FRAME_SUPPORTED, CONTEXT_SET_EXPRESSION_SUPPORTED, CONTEXT_SET_VARIABLE_SUPPORTED, CONTEXT_STACK_FRAME_SUPPORTS_RESTART, CONTEXT_STEP_INTO_TARGETS_SUPPORTED, CONTEXT_SUSPEND_DEBUGGEE_SUPPORTED, CONTEXT_TERMINATE_DEBUGGEE_SUPPORTED, CONTEXT_TERMINATE_THREADS_SUPPORTED, CONTEXT_VARIABLE_EVALUATE_NAME_PRESENT, CONTEXT_VARIABLE_IS_READONLY, CONTEXT_VARIABLE_VALUE, CONTEXT_WATCH_ITEM_TYPE, DEBUG_PANEL_ID, DISASSEMBLY_VIEW_ID, EDITOR_CONTRIBUTION_ID, IDebugService, INTERNAL_CONSOLE_OPTIONS_SCHEMA, REPL_VIEW_ID, State, VARIABLES_VIEW_ID, WATCH_VIEW_ID, getStateLabel } from '../common/debug.js';
+ import { DebugWatchAccessibilityAnnouncer } from '../common/debugAccessibilityAnnouncer.js';
+ import { DebugContentProvider } from '../common/debugContentProvider.js';
+ import { DebugLifecycle } from '../common/debugLifecycle.js';
+@@ -36,9 +36,9 @@ import { DebugVisualizerService, IDebugV
+ import { DisassemblyViewInput } from '../common/disassemblyViewInput.js';
+ import { ReplAccessibilityAnnouncer } from '../common/replAccessibilityAnnouncer.js';
+ import { BreakpointEditorContribution } from './breakpointEditorContribution.js';
+-import { BreakpointsView } from './breakpointsView.js';
++// DISABLED: import { BreakpointsView } from './breakpointsView.js';
+ import { CallStackEditorContribution } from './callStackEditorContribution.js';
+-import { CallStackView } from './callStackView.js';
++// DISABLED: import { CallStackView } from './callStackView.js';
+ import { registerColors } from './debugColors.js';
+ import { ADD_CONFIGURATION_ID, ADD_TO_WATCH_ID, ADD_TO_WATCH_LABEL, CALLSTACK_BOTTOM_ID, CALLSTACK_BOTTOM_LABEL, CALLSTACK_DOWN_ID, CALLSTACK_DOWN_LABEL, CALLSTACK_TOP_ID, CALLSTACK_TOP_LABEL, CALLSTACK_UP_ID, CALLSTACK_UP_LABEL, CONTINUE_ID, CONTINUE_LABEL, COPY_EVALUATE_PATH_ID, COPY_EVALUATE_PATH_LABEL, COPY_STACK_TRACE_ID, COPY_VALUE_ID, COPY_VALUE_LABEL, DEBUG_COMMAND_CATEGORY, DEBUG_CONSOLE_QUICK_ACCESS_PREFIX, DEBUG_QUICK_ACCESS_PREFIX, DEBUG_RUN_COMMAND_ID, DEBUG_RUN_LABEL, DEBUG_START_COMMAND_ID, DEBUG_START_LABEL, DISCONNECT_AND_SUSPEND_ID, DISCONNECT_AND_SUSPEND_LABEL, DISCONNECT_ID, DISCONNECT_LABEL, EDIT_EXPRESSION_COMMAND_ID, JUMP_TO_CURSOR_ID, NEXT_DEBUG_CONSOLE_ID, NEXT_DEBUG_CONSOLE_LABEL, OPEN_LOADED_SCRIPTS_LABEL, PAUSE_ID, PAUSE_LABEL, PREV_DEBUG_CONSOLE_ID, PREV_DEBUG_CONSOLE_LABEL, REMOVE_EXPRESSION_COMMAND_ID, RESTART_FRAME_ID, RESTART_LABEL, RESTART_SESSION_ID, SELECT_AND_START_ID, SELECT_AND_START_LABEL, SELECT_DEBUG_CONSOLE_ID, SELECT_DEBUG_CONSOLE_LABEL, SELECT_DEBUG_SESSION_ID, SELECT_DEBUG_SESSION_LABEL, SET_EXPRESSION_COMMAND_ID, SHOW_LOADED_SCRIPTS_ID, STEP_INTO_ID, STEP_INTO_LABEL, STEP_INTO_TARGET_ID, STEP_INTO_TARGET_LABEL, STEP_OUT_ID, STEP_OUT_LABEL, STEP_OVER_ID, STEP_OVER_LABEL, STOP_ID, STOP_LABEL, TERMINATE_THREAD_ID, TOGGLE_INLINE_BREAKPOINT_ID, COPY_ADDRESS_ID, COPY_ADDRESS_LABEL, TOGGLE_BREAKPOINT_ID, BREAK_WHEN_VALUE_CHANGES_ID, BREAK_WHEN_VALUE_IS_ACCESSED_ID, BREAK_WHEN_VALUE_IS_READ_ID } from './debugCommands.js';
+ import { DebugConsoleQuickAccess } from './debugConsoleQuickAccess.js';
+@@ -52,9 +52,9 @@ import './debugSettingMigration.js';
+ import { DebugStatusContribution } from './debugStatus.js';
+ import { DebugTitleContribution } from './debugTitle.js';
+ import { DebugToolBar } from './debugToolBar.js';
+-import { DebugViewPaneContainer } from './debugViewlet.js';
++// DISABLED: import { DebugViewPaneContainer } from './debugViewlet.js';
+ import { DisassemblyView, DisassemblyViewContribution } from './disassemblyView.js';
+-import { LoadedScriptsView } from './loadedScriptsView.js';
++// DISABLED: import { LoadedScriptsView } from './loadedScriptsView.js';
+ import './media/debug.contribution.css';
+ import './media/debugHover.css';
+ import { Repl } from './repl.js';
+@@ -62,9 +62,9 @@ import { ReplAccessibilityHelp } from '.
+ import { ReplAccessibleView } from './replAccessibleView.js';
+ import { RunAndDebugAccessibilityHelp } from './runAndDebugAccessibilityHelp.js';
+ import { StatusBarColorProvider } from './statusbarColorProvider.js';
+-import { SET_VARIABLE_ID, VIEW_MEMORY_ID, VariablesView } from './variablesView.js';
+-import { ADD_WATCH_ID, ADD_WATCH_LABEL, REMOVE_WATCH_EXPRESSIONS_COMMAND_ID, REMOVE_WATCH_EXPRESSIONS_LABEL, WatchExpressionsView } from './watchExpressionsView.js';
+-import { WelcomeView } from './welcomeView.js';
++import { SET_VARIABLE_ID, VIEW_MEMORY_ID } from './variablesView.js';
++import { ADD_WATCH_ID, ADD_WATCH_LABEL, REMOVE_WATCH_EXPRESSIONS_COMMAND_ID, REMOVE_WATCH_EXPRESSIONS_LABEL } from './watchExpressionsView.js';
++// DISABLED: import { WelcomeView } from './welcomeView.js';
+ 
+ const debugCategory = nls.localize('debugCategory', "Debug");
+ registerColors();
+@@ -448,29 +448,32 @@ Registry.as<IViewsRegistry>(ViewExtensio
+ }], VIEW_CONTAINER);
+ 
+ 
+-const viewContainer = Registry.as<IViewContainersRegistry>(ViewExtensions.ViewContainersRegistry).registerViewContainer({
+-	id: VIEWLET_ID,
+-	title: nls.localize2('run and debug', "Run and Debug"),
+-	openCommandActionDescriptor: {
+-		id: VIEWLET_ID,
+-		mnemonicTitle: nls.localize({ key: 'miViewRun', comment: ['&& denotes a mnemonic'] }, "&&Run"),
+-		keybindings: { primary: KeyMod.CtrlCmd | KeyMod.Shift | KeyCode.KeyD },
+-		order: 3
+-	},
+-	ctorDescriptor: new SyncDescriptor(DebugViewPaneContainer),
+-	icon: icons.runViewIcon,
+-	alwaysUseContainerInfo: true,
+-	order: 3,
+-}, ViewContainerLocation.Sidebar);
++// DISABLED: View container registration hidden to remove activity bar icon
++// const viewContainer = Registry.as<IViewContainersRegistry>(ViewExtensions.ViewContainersRegistry).registerViewContainer({
++// 	id: VIEWLET_ID,
++// 	title: nls.localize2('run and debug', "Run and Debug"),
++// 	openCommandActionDescriptor: {
++// 		id: VIEWLET_ID,
++// 		mnemonicTitle: nls.localize({ key: 'miViewRun', comment: ['&& denotes a mnemonic'] }, "&&Run"),
++// 		keybindings: { primary: KeyMod.CtrlCmd | KeyMod.Shift | KeyCode.KeyD },
++// 		order: 3
++// 	},
++// 	ctorDescriptor: new SyncDescriptor(DebugViewPaneContainer),
++// 	icon: icons.runViewIcon,
++// 	alwaysUseContainerInfo: true,
++// 	order: 3,
++// }, ViewContainerLocation.Sidebar);
+ 
+ // Register default debug views
+-const viewsRegistry = Registry.as<IViewsRegistry>(ViewExtensions.ViewsRegistry);
+-viewsRegistry.registerViews([{ id: VARIABLES_VIEW_ID, name: nls.localize2('variables', "Variables"), containerIcon: icons.variablesViewIcon, ctorDescriptor: new SyncDescriptor(VariablesView), order: 10, weight: 40, canToggleVisibility: true, canMoveView: true, focusCommand: { id: 'workbench.debug.action.focusVariablesView' }, when: CONTEXT_DEBUG_UX.isEqualTo('default') }], viewContainer);
+-viewsRegistry.registerViews([{ id: WATCH_VIEW_ID, name: nls.localize2('watch', "Watch"), containerIcon: icons.watchViewIcon, ctorDescriptor: new SyncDescriptor(WatchExpressionsView), order: 20, weight: 10, canToggleVisibility: true, canMoveView: true, focusCommand: { id: 'workbench.debug.action.focusWatchView' }, when: CONTEXT_DEBUG_UX.isEqualTo('default') }], viewContainer);
+-viewsRegistry.registerViews([{ id: CALLSTACK_VIEW_ID, name: nls.localize2('callStack', "Call Stack"), containerIcon: icons.callStackViewIcon, ctorDescriptor: new SyncDescriptor(CallStackView), order: 30, weight: 30, canToggleVisibility: true, canMoveView: true, focusCommand: { id: 'workbench.debug.action.focusCallStackView' }, when: CONTEXT_DEBUG_UX.isEqualTo('default') }], viewContainer);
+-viewsRegistry.registerViews([{ id: BREAKPOINTS_VIEW_ID, name: nls.localize2('breakpoints', "Breakpoints"), containerIcon: icons.breakpointsViewIcon, ctorDescriptor: new SyncDescriptor(BreakpointsView), order: 40, weight: 20, canToggleVisibility: true, canMoveView: true, focusCommand: { id: 'workbench.debug.action.focusBreakpointsView' }, when: ContextKeyExpr.or(CONTEXT_BREAKPOINTS_EXIST, CONTEXT_DEBUG_UX.isEqualTo('default'), CONTEXT_HAS_DEBUGGED) }], viewContainer);
+-viewsRegistry.registerViews([{ id: WelcomeView.ID, name: WelcomeView.LABEL, containerIcon: icons.runViewIcon, ctorDescriptor: new SyncDescriptor(WelcomeView), order: 1, weight: 40, canToggleVisibility: true, when: CONTEXT_DEBUG_UX.isEqualTo('simple') }], viewContainer);
+-viewsRegistry.registerViews([{ id: LOADED_SCRIPTS_VIEW_ID, name: nls.localize2('loadedScripts', "Loaded Scripts"), containerIcon: icons.loadedScriptsViewIcon, ctorDescriptor: new SyncDescriptor(LoadedScriptsView), order: 35, weight: 5, canToggleVisibility: true, canMoveView: true, collapsed: true, when: ContextKeyExpr.and(CONTEXT_LOADED_SCRIPTS_SUPPORTED, CONTEXT_DEBUG_UX.isEqualTo('default')) }], viewContainer);
++// DISABLED: viewsRegistry variable commented out since view container is disabled
++// const viewsRegistry = Registry.as<IViewsRegistry>(ViewExtensions.ViewsRegistry);
++// DISABLED: View registrations commented out since view container is disabled
++// viewsRegistry.registerViews([{ id: VARIABLES_VIEW_ID, name: nls.localize2('variables', "Variables"), containerIcon: icons.variablesViewIcon, ctorDescriptor: new SyncDescriptor(VariablesView), order: 10, weight: 40, canToggleVisibility: true, canMoveView: true, focusCommand: { id: 'workbench.debug.action.focusVariablesView' }, when: CONTEXT_DEBUG_UX.isEqualTo('default') }], viewContainer);
++// viewsRegistry.registerViews([{ id: WATCH_VIEW_ID, name: nls.localize2('watch', "Watch"), containerIcon: icons.watchViewIcon, ctorDescriptor: new SyncDescriptor(WatchExpressionsView), order: 20, weight: 10, canToggleVisibility: true, canMoveView: true, focusCommand: { id: 'workbench.debug.action.focusWatchView' }, when: CONTEXT_DEBUG_UX.isEqualTo('default') }], viewContainer);
++// viewsRegistry.registerViews([{ id: CALLSTACK_VIEW_ID, name: nls.localize2('callStack', "Call Stack"), containerIcon: icons.callStackViewIcon, ctorDescriptor: new SyncDescriptor(CallStackView), order: 30, weight: 30, canToggleVisibility: true, canMoveView: true, focusCommand: { id: 'workbench.debug.action.focusCallStackView' }, when: CONTEXT_DEBUG_UX.isEqualTo('default') }], viewContainer);
++// viewsRegistry.registerViews([{ id: BREAKPOINTS_VIEW_ID, name: nls.localize2('breakpoints', "Breakpoints"), containerIcon: icons.breakpointsViewIcon, ctorDescriptor: new SyncDescriptor(BreakpointsView), order: 40, weight: 20, canToggleVisibility: true, canMoveView: true, focusCommand: { id: 'workbench.debug.action.focusBreakpointsView' }, when: ContextKeyExpr.or(CONTEXT_BREAKPOINTS_EXIST, CONTEXT_DEBUG_UX.isEqualTo('default'), CONTEXT_HAS_DEBUGGED) }], viewContainer);
++// viewsRegistry.registerViews([{ id: WelcomeView.ID, name: WelcomeView.LABEL, containerIcon: icons.runViewIcon, ctorDescriptor: new SyncDescriptor(WelcomeView), order: 1, weight: 40, canToggleVisibility: true, when: CONTEXT_DEBUG_UX.isEqualTo('simple') }], viewContainer);
++// viewsRegistry.registerViews([{ id: LOADED_SCRIPTS_VIEW_ID, name: nls.localize2('loadedScripts', "Loaded Scripts"), containerIcon: icons.loadedScriptsViewIcon, ctorDescriptor: new SyncDescriptor(LoadedScriptsView), order: 35, weight: 5, canToggleVisibility: true, canMoveView: true, collapsed: true, when: ContextKeyExpr.and(CONTEXT_LOADED_SCRIPTS_SUPPORTED, CONTEXT_DEBUG_UX.isEqualTo('default')) }], viewContainer);
+ 
+ // Register disassembly view
+ 
+Index: code-server/lib/vscode/src/vs/workbench/contrib/scm/browser/scm.contribution.ts
+===================================================================
+--- code-server.orig/lib/vscode/src/vs/workbench/contrib/scm/browser/scm.contribution.ts
++++ code-server/lib/vscode/src/vs/workbench/contrib/scm/browser/scm.contribution.ts
+@@ -3,11 +3,11 @@
+  *  Licensed under the MIT License. See License.txt in the project root for license information.
+  *--------------------------------------------------------------------------------------------*/
+ 
+-import { localize, localize2 } from '../../../../nls.js';
++import { localize } from '../../../../nls.js';
+ import { Registry } from '../../../../platform/registry/common/platform.js';
+ import { IWorkbenchContributionsRegistry, registerWorkbenchContribution2, Extensions as WorkbenchExtensions, WorkbenchPhase } from '../../../common/contributions.js';
+ import { QuickDiffWorkbenchController } from './quickDiffDecorator.js';
+-import { VIEWLET_ID, ISCMService, VIEW_PANE_ID, ISCMProvider, ISCMViewService, REPOSITORIES_VIEW_PANE_ID, HISTORY_VIEW_PANE_ID } from '../common/scm.js';
++import { ISCMService, VIEW_PANE_ID, ISCMProvider, ISCMViewService } from '../common/scm.js';
+ import { KeyMod, KeyCode } from '../../../../base/common/keyCodes.js';
+ import { MenuRegistry, MenuId, registerAction2, Action2 } from '../../../../platform/actions/common/actions.js';
+ import { SCMActiveResourceContextKeyController, SCMActiveRepositoryController } from './activity.js';
+@@ -18,18 +18,18 @@ import { CommandsRegistry, ICommandServi
+ import { KeybindingsRegistry, KeybindingWeight } from '../../../../platform/keybinding/common/keybindingsRegistry.js';
+ import { InstantiationType, registerSingleton } from '../../../../platform/instantiation/common/extensions.js';
+ import { SCMService } from '../common/scmService.js';
+-import { IViewContainersRegistry, ViewContainerLocation, Extensions as ViewContainerExtensions, IViewsRegistry } from '../../../common/views.js';
+-import { SCMViewPaneContainer } from './scmViewPaneContainer.js';
+-import { SyncDescriptor } from '../../../../platform/instantiation/common/descriptors.js';
++// DISABLED: import { IViewContainersRegistry, ViewContainerLocation, Extensions as ViewContainerExtensions, IViewsRegistry } from '../../../common/views.js';
++// DISABLED: import { SCMViewPaneContainer } from './scmViewPaneContainer.js';
++// DISABLED: import { SyncDescriptor } from '../../../../platform/instantiation/common/descriptors.js';
+ import { ModesRegistry } from '../../../../editor/common/languages/modesRegistry.js';
+ import { Codicon } from '../../../../base/common/codicons.js';
+-import { registerIcon } from '../../../../platform/theme/common/iconRegistry.js';
++// DISABLED: import { registerIcon } from '../../../../platform/theme/common/iconRegistry.js';
+ import { ContextKeys, SCMViewPane } from './scmViewPane.js';
+ import { RepositoryPicker, SCMViewService } from './scmViewService.js';
+-import { SCMRepositoriesViewPane } from './scmRepositoriesViewPane.js';
++// DISABLED: import { SCMRepositoriesViewPane } from './scmRepositoriesViewPane.js';
+ import { IInstantiationService, ServicesAccessor } from '../../../../platform/instantiation/common/instantiation.js';
+ import { Context as SuggestContext } from '../../../../editor/contrib/suggest/browser/suggest.js';
+-import { MANAGE_TRUST_COMMAND_ID, WorkspaceTrustContext } from '../../workspace/common/workspace.js';
++// DISABLED: import { MANAGE_TRUST_COMMAND_ID, WorkspaceTrustContext } from '../../workspace/common/workspace.js';
+ import { IQuickDiffService } from '../common/quickDiff.js';
+ import { QuickDiffService } from '../common/quickDiffService.js';
+ import { getActiveElement, isActiveElement } from '../../../../base/browser/dom.js';
+@@ -37,7 +37,7 @@ import { SCMWorkingSetController } from
+ import { IViewsService } from '../../../services/views/common/viewsService.js';
+ import { IListService, WorkbenchList } from '../../../../platform/list/browser/listService.js';
+ import { isSCMRepository } from './util.js';
+-import { SCMHistoryViewPane } from './scmHistoryViewPane.js';
++// DISABLED: import { SCMHistoryViewPane } from './scmHistoryViewPane.js';
+ import { QuickDiffModelService, IQuickDiffModelService } from './quickDiffModel.js';
+ import { QuickDiffEditorController } from './quickDiffWidget.js';
+ import { EditorContributionInstantiation, registerEditorContribution } from '../../../../editor/browser/editorExtensions.js';
+@@ -63,98 +63,102 @@ Registry.as<IWorkbenchContributionsRegis
+ registerEditorContribution(QuickDiffEditorController.ID,
+ 	QuickDiffEditorController, EditorContributionInstantiation.AfterFirstRender);
+ 
+-const sourceControlViewIcon = registerIcon('source-control-view-icon', Codicon.sourceControl, localize('sourceControlViewIcon', 'View icon of the Source Control view.'));
++// DISABLED: sourceControlViewIcon variable commented out since view container is disabled
++// const sourceControlViewIcon = registerIcon('source-control-view-icon', Codicon.sourceControl, localize('sourceControlViewIcon', 'View icon of the Source Control view.'));
+ 
+-const viewContainer = Registry.as<IViewContainersRegistry>(ViewContainerExtensions.ViewContainersRegistry).registerViewContainer({
+-	id: VIEWLET_ID,
+-	title: localize2('source control', 'Source Control'),
+-	ctorDescriptor: new SyncDescriptor(SCMViewPaneContainer),
+-	storageId: 'workbench.scm.views.state',
+-	icon: sourceControlViewIcon,
+-	alwaysUseContainerInfo: true,
+-	order: 2,
+-	hideIfEmpty: true,
+-}, ViewContainerLocation.Sidebar, { doNotRegisterOpenCommand: true });
+-
+-const viewsRegistry = Registry.as<IViewsRegistry>(ViewContainerExtensions.ViewsRegistry);
+-const containerTitle = localize('source control view', "Source Control");
+-
+-viewsRegistry.registerViewWelcomeContent(VIEW_PANE_ID, {
+-	content: localize('no open repo', "No source control providers registered."),
+-	when: 'default'
+-});
+-
+-viewsRegistry.registerViewWelcomeContent(VIEW_PANE_ID, {
+-	content: localize('no open repo in an untrusted workspace', "None of the registered source control providers work in Restricted Mode."),
+-	when: ContextKeyExpr.and(ContextKeyExpr.equals('scm.providerCount', 0), WorkspaceTrustContext.IsEnabled, WorkspaceTrustContext.IsTrusted.toNegated())
+-});
+-
+-viewsRegistry.registerViewWelcomeContent(VIEW_PANE_ID, {
+-	content: `[${localize('manageWorkspaceTrustAction', "Manage Workspace Trust")}](command:${MANAGE_TRUST_COMMAND_ID})`,
+-	when: ContextKeyExpr.and(ContextKeyExpr.equals('scm.providerCount', 0), WorkspaceTrustContext.IsEnabled, WorkspaceTrustContext.IsTrusted.toNegated())
+-});
+-
+-viewsRegistry.registerViewWelcomeContent(HISTORY_VIEW_PANE_ID, {
+-	content: localize('no history items', "The selected source control provider does not have any source control history items."),
+-	when: ContextKeys.SCMHistoryItemCount.isEqualTo(0)
+-});
+-
+-viewsRegistry.registerViews([{
+-	id: REPOSITORIES_VIEW_PANE_ID,
+-	containerTitle,
+-	name: localize2('scmRepositories', "Repositories"),
+-	singleViewPaneContainerTitle: localize('source control repositories', "Source Control Repositories"),
+-	ctorDescriptor: new SyncDescriptor(SCMRepositoriesViewPane),
+-	canToggleVisibility: true,
+-	hideByDefault: true,
+-	canMoveView: true,
+-	weight: 20,
+-	order: 0,
+-	when: ContextKeyExpr.and(ContextKeyExpr.has('scm.providerCount'), ContextKeyExpr.notEquals('scm.providerCount', 0)),
+-	// readonly when = ContextKeyExpr.or(ContextKeyExpr.equals('config.scm.alwaysShowProviders', true), ContextKeyExpr.and(ContextKeyExpr.notEquals('scm.providerCount', 0), ContextKeyExpr.notEquals('scm.providerCount', 1)));
+-	containerIcon: sourceControlViewIcon
+-}], viewContainer);
+-
+-viewsRegistry.registerViews([{
+-	id: VIEW_PANE_ID,
+-	containerTitle,
+-	name: localize2('scmChanges', 'Changes'),
+-	singleViewPaneContainerTitle: containerTitle,
+-	ctorDescriptor: new SyncDescriptor(SCMViewPane),
+-	canToggleVisibility: true,
+-	canMoveView: true,
+-	weight: 40,
+-	order: 1,
+-	containerIcon: sourceControlViewIcon,
+-	openCommandActionDescriptor: {
+-		id: viewContainer.id,
+-		mnemonicTitle: localize({ key: 'miViewSCM', comment: ['&& denotes a mnemonic'] }, "Source &&Control"),
+-		keybindings: {
+-			primary: 0,
+-			win: { primary: KeyMod.CtrlCmd | KeyMod.Shift | KeyCode.KeyG },
+-			linux: { primary: KeyMod.CtrlCmd | KeyMod.Shift | KeyCode.KeyG },
+-			mac: { primary: KeyMod.WinCtrl | KeyMod.Shift | KeyCode.KeyG },
+-		},
+-		order: 2,
+-	}
+-}], viewContainer);
+-
+-viewsRegistry.registerViews([{
+-	id: HISTORY_VIEW_PANE_ID,
+-	containerTitle,
+-	name: localize2('scmGraph', "Graph"),
+-	singleViewPaneContainerTitle: localize('source control graph', "Source Control Graph"),
+-	ctorDescriptor: new SyncDescriptor(SCMHistoryViewPane),
+-	canToggleVisibility: true,
+-	canMoveView: true,
+-	weight: 40,
+-	order: 2,
+-	when: ContextKeyExpr.and(
+-		ContextKeyExpr.has('scm.historyProviderCount'),
+-		ContextKeyExpr.notEquals('scm.historyProviderCount', 0),
+-	),
+-	containerIcon: sourceControlViewIcon
+-}], viewContainer);
++// DISABLED: View container registration hidden to remove activity bar icon
++// const viewContainer = Registry.as<IViewContainersRegistry>(ViewContainerExtensions.ViewContainersRegistry).registerViewContainer({
++// 	id: VIEWLET_ID,
++// 	title: localize2('source control', 'Source Control'),
++// 	ctorDescriptor: new SyncDescriptor(SCMViewPaneContainer),
++// 	storageId: 'workbench.scm.views.state',
++// 	icon: sourceControlViewIcon,
++// 	alwaysUseContainerInfo: true,
++// 	order: 2,
++// 	hideIfEmpty: true,
++// }, ViewContainerLocation.Sidebar, { doNotRegisterOpenCommand: true });
++
++// DISABLED: viewsRegistry and containerTitle variables commented out since view container is disabled
++// const viewsRegistry = Registry.as<IViewsRegistry>(ViewContainerExtensions.ViewsRegistry);
++// const containerTitle = localize('source control view', "Source Control");
++
++// DISABLED: View registrations commented out since view container is disabled
++// viewsRegistry.registerViewWelcomeContent(VIEW_PANE_ID, {
++// 	content: localize('no open repo', "No source control providers registered."),
++// 	when: 'default'
++// });
++
++// viewsRegistry.registerViewWelcomeContent(VIEW_PANE_ID, {
++// 	content: localize('no open repo in an untrusted workspace', "None of the registered source control providers work in Restricted Mode."),
++// 	when: ContextKeyExpr.and(ContextKeyExpr.equals('scm.providerCount', 0), WorkspaceTrustContext.IsEnabled, WorkspaceTrustContext.IsTrusted.toNegated())
++// });
++
++// viewsRegistry.registerViewWelcomeContent(VIEW_PANE_ID, {
++// 	content: `[${localize('manageWorkspaceTrustAction', "Manage Workspace Trust")}](command:${MANAGE_TRUST_COMMAND_ID})`,
++// 	when: ContextKeyExpr.and(ContextKeyExpr.equals('scm.providerCount', 0), WorkspaceTrustContext.IsEnabled, WorkspaceTrustContext.IsTrusted.toNegated())
++// });
++
++// viewsRegistry.registerViewWelcomeContent(HISTORY_VIEW_PANE_ID, {
++// 	content: localize('no history items', "The selected source control provider does not have any source control history items."),
++// 	when: ContextKeys.SCMHistoryItemCount.isEqualTo(0)
++// });
++
++// viewsRegistry.registerViews([{
++// 	id: REPOSITORIES_VIEW_PANE_ID,
++// 	containerTitle,
++// 	name: localize2('scmRepositories', "Repositories"),
++// 	singleViewPaneContainerTitle: localize('source control repositories', "Source Control Repositories"),
++// 	ctorDescriptor: new SyncDescriptor(SCMRepositoriesViewPane),
++// 	canToggleVisibility: true,
++// 	hideByDefault: true,
++// 	canMoveView: true,
++// 	weight: 20,
++// 	order: 0,
++// 	when: ContextKeyExpr.and(ContextKeyExpr.has('scm.providerCount'), ContextKeyExpr.notEquals('scm.providerCount', 0)),
++// 	// readonly when = ContextKeyExpr.or(ContextKeyExpr.equals('config.scm.alwaysShowProviders', true), ContextKeyExpr.and(ContextKeyExpr.notEquals('scm.providerCount', 0), ContextKeyExpr.notEquals('scm.providerCount', 1)));
++// 	containerIcon: sourceControlViewIcon
++// }], viewContainer);
++
++// viewsRegistry.registerViews([{
++// 	id: VIEW_PANE_ID,
++// 	containerTitle,
++// 	name: localize2('scmChanges', 'Changes'),
++// 	singleViewPaneContainerTitle: containerTitle,
++// 	ctorDescriptor: new SyncDescriptor(SCMViewPane),
++// 	canToggleVisibility: true,
++// 	canMoveView: true,
++// 	weight: 40,
++// 	order: 1,
++// 	containerIcon: sourceControlViewIcon,
++// 	openCommandActionDescriptor: {
++// 		id: viewContainer.id,
++// 		mnemonicTitle: localize({ key: 'miViewSCM', comment: ['&& denotes a mnemonic'] }, "Source &&Control"),
++// 		keybindings: {
++// 			primary: 0,
++// 			win: { primary: KeyMod.CtrlCmd | KeyMod.Shift | KeyCode.KeyG },
++// 			linux: { primary: KeyMod.CtrlCmd | KeyMod.Shift | KeyCode.KeyG },
++// 			mac: { primary: KeyMod.WinCtrl | KeyMod.Shift | KeyCode.KeyG },
++// 		},
++// 		order: 2,
++// 	}
++// }], viewContainer);
++
++// viewsRegistry.registerViews([{
++// 	id: HISTORY_VIEW_PANE_ID,
++// 	containerTitle,
++// 	name: localize2('scmGraph', "Graph"),
++// 	singleViewPaneContainerTitle: localize('source control graph', "Source Control Graph"),
++// 	ctorDescriptor: new SyncDescriptor(SCMHistoryViewPane),
++// 	canToggleVisibility: true,
++// 	canMoveView: true,
++// 	weight: 40,
++// 	order: 2,
++// 	when: ContextKeyExpr.and(
++// 		ContextKeyExpr.has('scm.historyProviderCount'),
++// 		ContextKeyExpr.notEquals('scm.historyProviderCount', 0),
++// 	),
++// 	containerIcon: sourceControlViewIcon
++// }], viewContainer);
+ 
+ Registry.as<IWorkbenchContributionsRegistry>(WorkbenchExtensions.Workbench)
+ 	.registerWorkbenchContribution(SCMActiveRepositoryController, LifecyclePhase.Restored);
