@@ -30,7 +30,7 @@ const getRoot = async (req: Request, error?: Error): Promise<string> => {
   const content = await fs.readFile(path.join(rootPath, "src/browser/pages/login.html"), "utf8")
   const locale = req.args["locale"] || "en"
   i18n.changeLanguage(locale)
-  const appName = req.args["app-name"] || "code-server"
+  const appName = req.args["app-name"] || "codex"
   const welcomeText = req.args["welcome-text"] || (i18n.t("WELCOME", { app: appName }) as string)
 
   // Determine password message using i18n

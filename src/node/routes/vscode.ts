@@ -172,7 +172,7 @@ router.get("/", ensureVSCodeLoaded, async (req, res, next) => {
 })
 
 router.get("/manifest.json", async (req, res) => {
-  const appName = req.args["app-name"] || "code-server"
+  const appName = req.args["app-name"] || "codex"
   res.writeHead(200, { "Content-Type": "application/manifest+json" })
 
   res.end(

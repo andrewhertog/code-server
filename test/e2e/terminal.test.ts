@@ -30,15 +30,15 @@ describe("Integrated Terminal", ["--disable-workspace-trust"], {}, () => {
     expect(stdout).toMatch(address)
   })
 
-  // TODO@jsjoeio - add test to make sure full code-server path works
-  test("should be able to invoke `code-server` to open a file", async ({ codeServerPage }) => {
+  // TODO@jsjoeio - add test to make sure full codex path works
+  test("should be able to invoke `codex` to open a file", async ({ codeServerPage }) => {
     const tmpFolderPath = await tmpdir(testName)
     const tmpFile = path.join(tmpFolderPath, "test-file")
     await fs.writeFile(tmpFile, "test")
 
     await codeServerPage.focusTerminal()
 
-    await codeServerPage.page.keyboard.type(`code-server ${tmpFile}`)
+    await codeServerPage.page.keyboard.type(`codex ${tmpFile}`)
     await codeServerPage.page.keyboard.press("Enter")
 
     await codeServerPage.waitForTab(path.basename(tmpFile))
