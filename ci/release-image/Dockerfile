@@ -57,7 +57,9 @@ COPY ci/release-image/install-extensions.sh /home/coder/entrypoint.d/
 RUN chmod +x /home/coder/entrypoint.d/install-extensions.sh && \
     chown -R coder:coder /home/coder/entrypoint.d && \
     mkdir -p /home/coder/.config && \
-    chown -R coder:coder /home/coder/.config
+    chown -R coder:coder /home/coder/.config && \
+    mkdir -p /home/coder/workspace && \
+    chown -R coder:coder /home/coder/workspace
 
 EXPOSE 8080
 # This way, if someone sets $DOCKER_USER, docker-exec will still work as
@@ -65,5 +67,5 @@ EXPOSE 8080
 # docker-run.
 USER 1000
 ENV USER=coder
-WORKDIR /home/coder
+WORKDIR /home/coder/workspace
 ENTRYPOINT ["/usr/bin/entrypoint.sh", "--bind-addr", "0.0.0.0:8080", "."]
