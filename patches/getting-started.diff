@@ -1,10 +1,13 @@
 Modify Help: Getting Started
 
-This modifies some text on the Getting Started page and adds text about using
-code-server on a team.
+This patch:
+1. Modifies some text on the Getting Started page and adds text about using
+   code-server on a team.
+2. Changes the default value of 'workbench.startupEditor' from 'welcomePage' to 'none'
+   to disable the welcome screen on startup.
 
-It is enabled by default but can be overriden using the cli flag
-`--disable-getting-started-override`.
+The custom getting started text is enabled by default but can be overriden using the
+cli flag `--disable-getting-started-override`.
 
 Index: code-server/lib/vscode/src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStarted.ts
 ===================================================================
@@ -242,3 +245,16 @@ Index: code-server/lib/vscode/src/vs/workbench/common/contextkeys.ts
  
  //#endregion
  
+Index: code-server/lib/vscode/src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStarted.contribution.ts
+===================================================================
+--- code-server.orig/lib/vscode/src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStarted.contribution.ts
++++ code-server/lib/vscode/src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStarted.contribution.ts
+@@ -320,7 +320,7 @@ configurationRegistry.registerConfigurat
+ 				localize({ comment: ['This is the description for a setting. Values surrounded by single quotes are not to be translated.'], key: 'workbench.startupEditor.welcomePageInEmptyWorkbench' }, "Open the Welcome page when opening an empty workbench."),
+ 				localize({ comment: ['This is the description for a setting. Values surrounded by single quotes are not to be translated.'], key: 'workbench.startupEditor.terminal' }, "Open a new terminal in the editor area."),
+ 			],
+-			'default': 'welcomePage',
++			'default': 'none',
+ 			'description': localize('workbench.startupEditor', "Controls which editor is shown at startup, if none are restored from the previous session.")
+ 		},
+ 		'workbench.welcomePage.preferReducedMotion': {

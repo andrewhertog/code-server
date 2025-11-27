@@ -11,21 +11,6 @@ Index: code-server/lib/vscode/src/vs/code/browser/workbench/workbench.html
  		<link rel="apple-touch-icon" sizes="192x192" href="{{BASE}}/_static/src/browser/media/pwa-icon-192.png" />
  		<link rel="apple-touch-icon" sizes="512x512" href="{{BASE}}/_static/src/browser/media/pwa-icon-512.png" />
  
-Index: code-server/lib/vscode/product.json
-===================================================================
---- code-server.orig/lib/vscode/product.json
-+++ code-server/lib/vscode/product.json
-@@ -5,8 +5,8 @@
- 	"dataFolderName": ".vscode-oss",
- 	"win32MutexName": "vscodeoss",
- 	"licenseName": "MIT",
--	"licenseUrl": "https://github.com/microsoft/vscode/blob/main/LICENSE.txt",
--	"serverLicenseUrl": "https://github.com/microsoft/vscode/blob/main/LICENSE.txt",
-+	"licenseUrl": "https://github.com/andrewhertog/code-server/blob/main/LICENSE",
-+	"serverLicenseUrl": "https://github.com/andrewhertog/code-server/blob/main/LICENSE",
- 	"serverGreeting": [],
- 	"serverLicense": [],
- 	"serverLicensePrompt": "",
 Index: code-server/lib/vscode/src/vs/platform/dialogs/browser/dialog.ts
 ===================================================================
 --- code-server.orig/lib/vscode/src/vs/platform/dialogs/browser/dialog.ts
